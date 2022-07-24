@@ -1,7 +1,10 @@
 ---
 # tasks file for berglucht.common
 
-# tasks file for docker
+- name: Create users
+  include_tasks: ./users.yml
+  tags: ['common', 'users']
+  
 - name: Hardening 
   include_tasks: ./hardening.yml
   tags: ['common', 'hardening']

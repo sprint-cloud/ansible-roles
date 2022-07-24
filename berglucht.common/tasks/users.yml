@@ -1,0 +1,6 @@
+- name: Create Admin user
+  user:
+    name: "{{ admin_user }}"
+    groups: sudo
+    shell: "/bin/bash"
+    append: yes
