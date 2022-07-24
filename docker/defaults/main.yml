@@ -1,0 +1,8 @@
+---
+# defaults file for docker
+
+# Release for adding repo
+ubuntu_release: focal
+
+# Dockersettings
+docker_admin_user: jeroen

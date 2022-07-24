@@ -1,0 +1,18 @@
+---
+# tasks file for docker
+- name: Create Docker admin 
+  include_tasks: ./users.yml
+  tags: ['docker', 'users']
+
+- name: Install Docker
+  include_tasks: ./install.yml
+  tags: ['docker', 'install']
+
+- name: Configure Docker
+  include_tasks: ./configure.yml
+  tags: ['docker', 'configure']
+
+- name: Harden Docker
+  include_tasks: ./harden.yml
+  tags: ['docker', 'harden']
+  

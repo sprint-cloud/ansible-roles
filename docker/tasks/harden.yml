@@ -1,0 +1,4 @@
+- name: Install packages for hardening
+  apt:
+    state: present
+    pkg: "{{ DOCKER_HARDEN_PACKAGES }}"

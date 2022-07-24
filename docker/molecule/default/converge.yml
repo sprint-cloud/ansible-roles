@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  tasks:  
+    - name: "Including docker role"
+      include_role:
+        name: "klapkop.my_roles.docker"

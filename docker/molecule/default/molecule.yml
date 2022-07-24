@@ -1,0 +1,16 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: openstack
+platforms:
+  - name: ansible-docker
+    image: ${MOLECULE_OPENSTACK_IMAGE}
+    flavor: "m1.medium"
+    network: ${MOLECULE_OPENSTACK_NETWORK:-molecule}
+    fip_pool: ${MOLECULE_OPENSTACK_FIP_POOL}
+    ssh_user: ${MOLECULE_OPENSTACK_SSH_USER:-cloud-user}
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

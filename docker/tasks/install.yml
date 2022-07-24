@@ -1,0 +1,24 @@
+---
+# tasks file for docker
+- name: Install Docker dependencies
+  apt:
+    state: present
+    update_cache: yes
+    pkg: "{{ DOCKER_DEPENDS }}"
+
+- name: Add docker GPG Key
+  tags: ['docker', 'install_docker']
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker repo
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu "{{ ubuntu_release }}" stable
+    
+- name: Install Docker
+  apt:
+    state: present
+    update_cache: yes
+    pkg: "{{ DOCKER_PACKAGES }}"
+

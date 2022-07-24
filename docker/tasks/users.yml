@@ -1,0 +1,11 @@
+- name: Create Docker group
+  group: 
+    name: docker
+    state: present
+
+- name: Create Docker admin
+  user:
+    name: "{{ docker_admin_user }}"
+    groups: docker
+    shell: "/bin/bash"
+    append: yes
