@@ -5,4 +5,4 @@
 ubuntu_release: focal
 
 # Dockersettings
-docker_admin_user: jeroen
+docker_user: dockeruser

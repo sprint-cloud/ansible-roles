@@ -14,5 +14,5 @@
 
 - name: Harden Docker
   include_tasks: ./harden.yml
-  tags: ['docker', 'harden']
+  tags: ['docker', 'hardening']
   

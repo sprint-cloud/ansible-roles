@@ -5,7 +5,7 @@
 
 - name: Create Docker admin
   user:
-    name: "{{ docker_admin_user }}"
+    name: "{{ docker_user }}"
     groups: docker
     shell: "/bin/bash"
     append: yes
