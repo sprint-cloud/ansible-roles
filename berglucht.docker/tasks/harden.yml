@@ -2,3 +2,13 @@
   apt:
     state: present
     pkg: "{{ DOCKER_HARDEN_PACKAGES }}"
+
+- name: Setup Auditd rules
+  copy:
+    src: auditd/docker.rules
+    dest: /etc/audit/rules.d/docker.rules
+    owner: root
+    group: root
+    mode: 600
+  notify: Restart Auditd
+

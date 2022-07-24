@@ -9,10 +9,10 @@
   tags: ['docker', 'install']
 
 - name: Configure Docker
-  include_tasks: ./configure.yml
+  import_tasks: ./configure.yml
   tags: ['docker', 'configure']
 
 - name: Harden Docker
-  include_tasks: ./harden.yml
-  tags: ['docker', 'hardening']
+  import_tasks: ./harden.yml
+  tags: ['docker', 'docker-hardening']
   

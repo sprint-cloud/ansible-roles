@@ -6,3 +6,6 @@ ubuntu_release: focal
 
 # Dockersettings
 docker_user: dockeruser
+
+# Enable user namespaces - https://docs.docker.com/engine/security/userns-remap/
+docker_enable_userns: yes

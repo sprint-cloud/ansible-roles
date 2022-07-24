@@ -1,1 +1,10 @@
 ## notify: Restart Docker
+
+- name: Configure Docker daemon
+  template:
+    src: daemon.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Docker
