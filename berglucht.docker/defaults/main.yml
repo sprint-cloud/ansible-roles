@@ -1,7 +1,7 @@
 ---
 # defaults file for docker
 ubuntu_release: focal
-docker_user: dockeruser
+docker_admin_user: dockadmin
 
 # Settings for generating the daemon.json file
 docker_daemon_settings:
