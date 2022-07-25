@@ -1,3 +1,6 @@
 ---
 # defaults file for berglucht.common
 admin_user: ubuntu
+
+### Auditing ###
+audit_results_path: /tmp/audit

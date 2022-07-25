@@ -12,3 +12,47 @@
     mode: 600
   notify: Restart Auditd
 
+
+
+- name: Setup docker-bench-security audit
+  block:
+    - name: Install Docker security bench
+      git:
+        repo: "{{ DOCKER_BENCH_REPO }}"
+        dest: "{{ DOCKER_BENCH_PATH }}"
+        depth: 1
+
+    - name: Running Docker security audit
+      command:
+        chdir: "{{ DOCKER_BENCH_PATH }}"
+        cmd: "./docker-bench-security.sh"
+    
+    - name: "Storing audit results"
+      fetch:
+        src: "{{ DOCKER_BENCH_PATH }}/log/docker-bench-security.log"
+        dest: "{{ audit_results_path }}/{{ inventory_hostname }}/docker-bench-security/"
+        flat: yes
+
+    - name: "Reading security audit results"
+      shell: "cat {{ DOCKER_BENCH_PATH }}/log/docker-bench-security.log.json"
+      register: secbench_result
+    
+    - name: "Converting results from json"
+      set_fact:
+        secbench_data: "{{ secbench_result.stdout | from_json }}"
+    
+    - name: "Show audit results"
+      debug:
+        msg:
+          - "Docker bench security audit results:"
+          - "checks: {{ secbench_data.checks }}"
+          - "Version: {{ secbench_data.dockerbenchsecurity }}"
+          - "Score: {{ secbench_data.score }}"
+          - ""
+          - "The audit log has been stored locally: {{ audit_results_path }}/{{ inventory_hostname }}/docker-bench-security/docker-bench-security.log"
+  tags:
+    - never
+    - audit
+    - secbench
+  
+  
