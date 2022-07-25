@@ -9,3 +9,11 @@ docker_user: dockeruser
 
 # Enable user namespaces - https://docs.docker.com/engine/security/userns-remap/
 docker_enable_userns: yes
+
+# Ensure network traffic is restricted between containers on the default bridge
+# https://www.tenable.com/audits/items/CIS_Docker_v1.3.1_L1_Docker_Linux.audit:a4b8ede320ca146742237aeae90e5f93
+docker restrict_traffic: yes
+
+
+#### TODO #####
+# Create way to pin docker version
