@@ -9,13 +9,15 @@ docker_daemon_settings:
   userns-remap: 'default'
   userland-proxy: false
   
+# pin docker packages
+docker-ce-version: 5:20.10.17~3-0~ubuntu-focal
+docker-ce-cli-version: 5:20.10.17~3-0~ubuntu-focal
 
-
-#### TODO #####
-# Create way to pin docker version
 
 ##### Security #####
 # Enable user namespaces - https://docs.docker.com/engine/security/userns-remap/
 
 # Ensure network traffic is restricted between containers on the default bridge
 # https://www.tenable.com/audits/items/CIS_Docker_v1.3.1_L1_Docker_Linux.audit:a4b8ede320ca146742237aeae90e5f93
+
+#### TODO #####

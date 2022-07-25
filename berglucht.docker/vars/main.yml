@@ -1,17 +1,5 @@
 ---
 # vars file for docker
-DOCKER_DEPENDS:
-  - ca-certificates
-  - curl
-  - gnupg
-  - lsb-release
-  - python3-apt
-
-DOCKER_PACKAGES:
-  - docker-ce 
-  - docker-ce-cli 
-  - containerd.io 
-  - docker-compose-plugin
 
 ### Auditing ###
 DOCKER_BENCH_PATH: /opt/docker-bench-security

@@ -4,7 +4,12 @@
   apt:
     state: present
     update_cache: yes
-    pkg: "{{ DOCKER_DEPENDS }}"
+    pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - python3-apt
 
 - name: Add docker GPG Key
   tags: ['docker', 'install_docker']
@@ -20,5 +25,11 @@
   apt:
     state: present
     update_cache: yes
-    pkg: "{{ DOCKER_PACKAGES }}"
+    pkg:
+      - "docker-ce={{ docker-ce-version }}"
+      - "docker-ce-cli={{ docker-ce-cli-version }}"
+      - containerd.io 
+      - docker-compose-plugin
+
+
 
