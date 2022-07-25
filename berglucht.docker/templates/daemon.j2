@@ -1,9 +1,0 @@
-{
-{% if 'docker_enable_userns' %}
-  "userns-remap": "default",
-{% endif %}
-{% if 'docker_restrict_traffic' %}
-  "icc": false,
-{% endif %}
- "userland-proxy": false
-}

@@ -1,8 +1,10 @@
 ## notify: Restart Docker
+- set_fact:
+    daemon_config: "{{ docker_daemon_settings | to_nice_json(indent=2) }}"
 
-- name: Configure Docker daemon
-  template:
-    src: daemon.j2
+- name: Generate Docker daemon config
+  copy:
+    content: "{{ daemon_config }}"
     dest: /etc/docker/daemon.json
     owner: root
     group: root
