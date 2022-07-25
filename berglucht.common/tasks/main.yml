@@ -4,7 +4,11 @@
 - name: Create users
   include_tasks: ./users.yml
   tags: ['common', 'users']
-  
+
+- name: Firewall
+  import_tasks: ./firewall.yml
+  tags: ['common', 'firewall']
+
 - name: Hardening 
   include_tasks: ./hardening.yml
   tags: ['common', 'os-hardening']
