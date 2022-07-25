@@ -14,7 +14,7 @@
 
 
 
-- name: Setup docker-bench-security audit
+- name: Peform docker-bench-security audit
   block:
     - name: Install Docker security bench
       git:
