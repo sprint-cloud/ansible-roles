@@ -9,10 +9,6 @@ docker_daemon_settings:
   userns-remap: 'default'
   userland-proxy: false
   
-# pin docker packages
-docker-ce-version: 5:20.10.17~3-0~ubuntu-focal
-docker-ce-cli-version: 5:20.10.17~3-0~ubuntu-focal
-
 ##### Security #####
 # Enable user namespaces - https://docs.docker.com/engine/security/userns-remap/
 

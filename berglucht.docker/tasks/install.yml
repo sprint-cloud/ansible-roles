@@ -26,8 +26,8 @@
     state: present
     update_cache: yes
     pkg:
-      - "docker-ce={{ docker-ce-version }}"
-      - "docker-ce-cli={{ docker-ce-cli-version }}"
+      - "docker-ce"
+      - "docker-ce-cli"
       - containerd.io 
       - docker-compose-plugin
 
