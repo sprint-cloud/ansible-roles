@@ -1,8 +1,3 @@
-- name: Install packages for hardening
-  apt:
-    state: present
-    pkg: "{{ DOCKER_HARDEN_PACKAGES }}"
-
 - name: Setup Auditd rules
   copy:
     src: auditd/docker.rules
@@ -11,8 +6,6 @@
     group: root
     mode: 600
   notify: Restart Auditd
-
-
 
 - name: Peform docker-bench-security audit
   block:
