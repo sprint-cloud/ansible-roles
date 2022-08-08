@@ -5,5 +5,8 @@ admin_user: ubuntu
 ### Auditing ###
 audit_results_path: /tmp/audit
 
+### Set Nvidia driver version to install headless drivers
+#nvidia_driver_version: 515
+
 ### Install extra packages ###
 extra_package_install: {}
