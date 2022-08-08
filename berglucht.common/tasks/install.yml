@@ -1,0 +1,10 @@
+- name: Upgrade system
+  apt:
+    update_cache: yes
+    upgrade: safe
+
+- name: Install user defined packages
+  apt:
+    state: present
+    pkg: "{{ extra_package_install }}"
+    

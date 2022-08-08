@@ -9,6 +9,10 @@
   import_tasks: ./firewall.yml
   tags: ['common', 'firewall']
 
+- name: Install packages
+  import_tasks: ./install.yml
+  tags: ['common', 'install']
+
 - name: Hardening 
   include_tasks: ./hardening.yml
   tags: ['common', 'os-hardening']
