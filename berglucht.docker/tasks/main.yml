@@ -8,6 +8,11 @@
   include_tasks: ./install.yml
   tags: ['docker', 'install']
 
+- name: Install Nvidia container toolkit
+  include_tasks: ./nvidia.yml
+  tags: ['docker', 'nvidia']
+  whwen: install_nvidia_toolkit
+
 - name: Configure Docker
   import_tasks: ./configure.yml
   tags: ['docker', 'configure']

@@ -1,0 +1,15 @@
+- name: Add Nvidia container toolkit Key
+  apt_key:
+    url: https://nvidia.github.io/libnvidia-container/gpgkey
+    state: present
+
+- name: Add Nvidia container toolkit repo
+  apt_repository:
+    repo:  "deb https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/$(ARCH) /"
+
+- name: Install Nvidia container repo
+  apt:
+    pkg: nvidia-container-toolkit
+    update_cache: yes
+  notify: Restart Docker
+
