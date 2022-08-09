@@ -5,12 +5,12 @@
 
 - name: Install NVIDIA headless drivers
   apt:
-    state: presents
-    pkg: 
-      - nvidia-headless-"{{ nvidia_driver_version }}"
-      - nvidia-utils-"{{ nvidia_driver_version }}"
-      - libnvidia-encode-"{{ nvidia_driver_version }}"
-    when: nvidia_driver_version is defined
+    state: present
+    pkg:
+      - "nvidia-headless-{{ nvidia_driver_version }}"
+      - "nvidia-utils-{{ nvidia_driver_version }}"
+      - "libnvidia-encode-{{ nvidia_driver_version }}"
+  when: nvidia_driver_version is defined
       
 - name: Install user defined packages
   apt:

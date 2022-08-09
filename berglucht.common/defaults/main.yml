@@ -9,4 +9,4 @@ audit_results_path: /tmp/audit
 #nvidia_driver_version: 515
 
 ### Install extra packages ###
-extra_package_install: {}
+extra_package_install: []
