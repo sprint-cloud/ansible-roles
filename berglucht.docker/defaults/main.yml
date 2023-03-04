@@ -1,7 +1,7 @@
 ---
 # defaults file for docker
-docker_admin_user: dockadmin
 install_nvidia_toolkit: false
+
 # Settings for generating the daemon.json file
 docker_daemon_settings:
   icc: false
