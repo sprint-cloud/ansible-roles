@@ -12,7 +12,6 @@
       - python3-apt
 
 - name: Add docker GPG Key
-  tags: ['docker', 'install_docker']
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present

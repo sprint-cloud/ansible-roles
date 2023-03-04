@@ -2,18 +2,14 @@
 # tasks file for docker
 - name: Install Docker
   include_tasks: ./install.yml
-  tags: ['docker', 'install']
 
 - name: Install Nvidia container toolkit
   include_tasks: ./nvidia.yml
-  tags: ['docker', 'nvidia']
   when: install_nvidia_toolkit
 
 - name: Configure Docker
   import_tasks: ./configure.yml
-  tags: ['docker', 'configure']
 
 - name: Harden Docker
   import_tasks: ./harden.yml
-  tags: ['docker', 'docker-hardening']
   
