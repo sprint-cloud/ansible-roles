@@ -1,7 +1,26 @@
+- name: Enable firewall logging
+  community.general.ufw:
+    logging: 'on'
+  when: ufw_enable_logging
+
+- name: Ratelimit SSH connections
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
 - name: Allow SSH traffic
   ufw:
     rule: allow
     name: OpenSSH
+
+- name: Allow additional firewall ports
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    from_ip: "{{ item.from_ip }}"
+  with_items: "{{ ufw_additional_ports }}"
 
 - name: Enable firewall
   ufw:

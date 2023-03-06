@@ -5,8 +5,13 @@ admin_user: ubuntu
 ### Auditing ###
 audit_results_path: /tmp/audit
 
-### Set Nvidia driver version to install headless drivers
-#nvidia_driver_version: 515
-
 ### Install extra packages ###
 extra_package_install: []
+
+### Firewall ###
+ufw_enable_logging: true
+ufw_additional_ports: []
+#     - name: Name of application
+#       port: Port to Open
+#       proto: Protocol
+#       from_ip: Source IP address
