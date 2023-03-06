@@ -1,10 +1,37 @@
 - name: Upgrade system
   apt:
     update_cache: yes
-    upgrade: safe
-     
+    cache_valid_time: 3600
+    upgrade: dist
+  when: perform_system_upgrade
+
+- name: Check if reboot required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+
+- name: Check if server should be rebooted
+  debug:
+    msg: "Reboot is required but reboot_when_required is False!"
+  when: reboot_required_file.stat.exists == true and not reboot_when_required
+  
+- name: Reboot server
+  reboot:
+  when: reboot_required_file.stat.exists == true and reboot_when_required
+
 - name: Install user defined packages
   apt:
     state: present
     pkg: "{{ extra_package_install }}"
+
+- name: Delete user defined packages
+  apt:
+    state: absent
+    pkg: "{{ extra_package_remove }}"
+
+- name: Clean apt packages
+  apt:
+    autoremove: true
+    autoclean: true
+
     

@@ -1,12 +1,18 @@
 ---
 # defaults file for berglucht.common
+### System ###
 admin_user: ubuntu
+reboot_when_required: false
+perform_system_upgrade: true
 
 ### Auditing ###
 audit_results_path: /tmp/audit
 
 ### Install extra packages ###
 extra_package_install: []
+
+### Remove extra packages ###
+extra_package_remove: []
 
 ### Firewall ###
 ufw_enable_logging: true
