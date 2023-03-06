@@ -2,16 +2,7 @@
   apt:
     update_cache: yes
     upgrade: safe
-
-- name: Install NVIDIA headless drivers
-  apt:
-    state: present
-    pkg:
-      - "nvidia-headless-{{ nvidia_driver_version }}"
-      - "nvidia-utils-{{ nvidia_driver_version }}"
-      - "libnvidia-encode-{{ nvidia_driver_version }}"
-  when: nvidia_driver_version is defined
-      
+     
 - name: Install user defined packages
   apt:
     state: present
