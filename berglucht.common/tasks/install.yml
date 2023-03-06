@@ -24,6 +24,11 @@
     state: present
     pkg: "{{ extra_package_install }}"
 
+- name: Install hardening packages
+  ansible.builtin.apt:
+    state: present
+    pkg: acct
+
 - name: Delete user defined packages
   apt:
     state: absent

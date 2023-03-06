@@ -1,8 +1,18 @@
-- name: Install hardening packages
-  ansible.builtin.apt:
+- name: Restrict loading TTY line disciplines
+  ansible.posix.sysctl:
+    name: dev.tty.ldisc_autoload
+    value: 0
     state: present
-    update_cache: true
-    pkg: "{{ HARDENING_PACKAGES }}"
+
+- name: Restrict unprivileged access to the perf_event_open() system call
+  ansible.posix.sysctl:
+    name: kernel.perf_event_paranoid
+    value: 3
+
+- name: Hardened BPF JIT compilation
+  ansible.posix.sysctl:
+    name: net.core.bpf_jit_harden
+    value: 2
 
 - name: Add a legal banner to /etc/issue, to warn unauthorized users [BANN-7126]
   ansible.builtin.copy:

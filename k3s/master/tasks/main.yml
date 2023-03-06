@@ -15,9 +15,11 @@
 
 - name: Deploy vip manifest
   include_tasks: vip.yml
+  when: kube_vip_enable
 
 - name: Deploy metallb manifest
   include_tasks: metallb.yml
+  when: metal_lb_enable
 
 - name: Init cluster inside the transient k3s-init service
   command:
