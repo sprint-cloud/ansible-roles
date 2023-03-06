@@ -1,0 +1,48 @@
+---
+- name: Allow access to ssh
+  community.general.ufw:
+    rule: allow
+    port: ssh
+    proto: tcp
+
+- name: Allow access to K3S api
+  community.general.ufw:
+    rule: allow
+    port: 6443
+    proto: tcp
+  when: "'master' in group_names"
+
+- name: Allow K3s server nodes to access etcd
+  community.general.ufw:
+    rule: allow
+    port: "2379:2380"
+    proto: tcp
+    from_ip: "{{ hostvars[item]['ansible_eth0']['ipv4']['address'] }}"
+  loop: "{{ groups['master'] }}"
+  when: "'master' in group_names"
+
+- name: Allow K3s server nodes to access flannel
+  community.general.ufw:
+    rule: allow
+    port: 8472
+    proto: udp
+    from_ip: "{{ hostvars[item]['ansible_eth0']['ipv4']['address'] }}"
+  loop: "{{ groups['master'] }}"
+
+- name: Allow K3s worker nodes to access flannel
+  community.general.ufw:
+    rule: allow
+    port: 8472
+    proto: udp
+    from_ip: "{{ hostvars[item]['ansible_eth0']['ipv4']['address'] }}"
+  loop: "{{ groups['node'] }}"
+
+- name: Allow access to metrics endpoint
+  community.general.ufw:
+    rule: allow
+    port: 10250
+    proto: tcp
+
+- name: Enable UFW firewall
+  community.general.ufw:
+    state: enabled

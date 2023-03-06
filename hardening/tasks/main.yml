@@ -1,0 +1,21 @@
+---
+- name: Secure Kernel
+  ansible.builtin.import_tasks:
+    file: kernel.yml
+
+- name: Secure system
+  ansible.builtin.import_tasks:
+    file: system.yml
+
+- name: Setup UFW firewall
+  ansible.builtin.import_tasks:
+    file: firewall.yml
+
+
+# TODO:
+#   * Install a file integrity tool to monitor changes to critical and sensitive files [FINT-4350] 
+#       https://cisofy.com/lyni
+# * Audit daemon is enabled with an empty ruleset. Disable the daemon or define rules [ACCT-9630] 
+#     https://cisofy.com/lynis/controls/ACCT-9630/
+# * Enable sysstat to collect accounting (no results) [ACCT-9626] 
+#     https://cisofy.com/lynis/controls/ACCT-9626/

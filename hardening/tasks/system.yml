@@ -1,0 +1,32 @@
+- name: Install hardening packages
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    pkg: "{{ HARDENING_PACKAGES }}"
+
+- name: Add a legal banner to /etc/issue, to warn unauthorized users [BANN-7126]
+  ansible.builtin.copy:
+    src: issue
+    dest: /etc/issue
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add legal banner to /etc/issue.net, to warn unauthorized users [BANN-7130]
+  ansible.builtin.copy:
+    src: issue.net
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Fix /boot/grub/grub.cfg [FILE-7524]
+  ansible.builtin.file:
+    path: /boot/grub/grub.cfg
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Enable process accounting [ACCT-9622]
+  ansible.builtin.command:
+    cmd: '/usr/sbin/accton on'
