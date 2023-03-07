@@ -1,6 +1,13 @@
 ---
 # tasks file for berglucht.common
 
+- name: Display all variables/facts known for a host
+  debug:
+    var: hostvars[inventory_hostname]
+  tags: 
+    - never
+    - debug_info
+
 - name: Create users
   include_tasks: ./users.yml
 
