@@ -13,6 +13,8 @@
 
 - name: Firewall
   import_tasks: ./firewall.yml
+  tags:
+    - firewall
 
 - name: Install packages
   import_tasks: ./install.yml
