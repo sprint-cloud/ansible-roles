@@ -13,3 +13,17 @@ server_init_args: >-
 
 kube_vip_enable: true
 metal_lb_enable: true
+
+podsecurity_defaults:
+      enforce: privileged
+      enforce_version: v1.26
+      audit: baseline
+      audit_version: latest
+      warn: baseline
+      warn_version: latest
+
+podsecurity_exemptions:
+      usernames: []
+      runtime: []
+      namespaces: []
+

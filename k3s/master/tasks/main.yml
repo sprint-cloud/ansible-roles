@@ -21,6 +21,16 @@
   include_tasks: metallb.yml
   when: metal_lb_enable
 
+- name: Copy Admission Controller config to server node
+  template:
+    src: "admission-configuration.yaml.j2"
+    dest: "/etc/rancher/k3s/admission-configuration.yaml"
+    owner: root
+    group: root
+    mode: 0640
+  tags:
+    - podsecurity
+
 - name: Init cluster inside the transient k3s-init service
   command:
     cmd: "systemd-run -p RestartSec=2 \
