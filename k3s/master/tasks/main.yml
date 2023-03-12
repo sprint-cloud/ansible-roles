@@ -16,10 +16,14 @@
 - name: Deploy vip manifest
   include_tasks: vip.yml
   when: kube_vip_enable
-
+  
 - name: Deploy metallb manifest
   include_tasks: metallb.yml
   when: metal_lb_enable
+
+- name: Deploy canal network policy manifest
+  include_tasks: canal.yml
+  when: canal_enable
 
 - name: Copy Admission Controller config to server node
   template:
