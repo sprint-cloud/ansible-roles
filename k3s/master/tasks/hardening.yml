@@ -1,0 +1,87 @@
+# Set kernel paramaters
+- name: Set kernel parameter vm.panic_on_oom
+  ansible.posix.sysctl:
+    name: vm.panic_on_oom
+    value: 0
+
+- name: Set kernel parameter vm.overcommit_memory
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: 1
+
+- name: Set kernel parameter kernel.panic
+  ansible.posix.sysctl:
+    name: kernel.panic
+    value: 10
+
+- name: Set kernel parameter kernel.panic_on_oops
+  ansible.posix.sysctl:
+    name: kernel.panic_on_oops
+    value: 1
+
+- name: Set kernel parameter kernel.keys.root_maxbytes
+  ansible.posix.sysctl:
+    name: kernel.keys.root_maxbytes
+    value: 25000000
+
+# Policy
+- name: Create  directory
+  file:
+    path: /var/lib/rancher/k3s/server/
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Copy Admission Controller config to server node
+  copy:
+    src: "psa.yaml"
+    dest: "/var/lib/rancher/k3s/server/psa.yaml"
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Create manifests directory on first master
+  file:
+    path: /var/lib/rancher/k3s/server/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+
+- name: Block all traffic between namespaces
+  copy:
+    src: "allow-ingress.yaml"
+    dest: "/var/lib/rancher/k3s/server/manifests/block-all.yaml"
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+
+- name: Allow traffic to Traefik ingress controller
+  copy:
+    src: "allow-ingress.yaml"
+    dest: "/var/lib/rancher/k3s/server/manifests/allow-ingeress.yaml"
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+
+# Auditing
+- name: Create audit directory
+  file:
+    path: /var/lib/rancher/k3s/server/logs
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+
+- name: Copy audit file to master
+  copy:
+    src: "audit.yaml"
+    dest: "/var/lib/rancher/k3s/server/audit.yaml"
+    owner: root
+    group: root
+    mode: 0644

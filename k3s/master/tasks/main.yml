@@ -13,6 +13,23 @@
   args:
     warn: false  # The ansible systemd module does not support reset-failed
 
+- name: Create config directory
+  file:
+    path: /etc/rancher/k3s
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+
+- name: Copy k3s config file to master
+  copy:
+    src: config.yaml
+    dest: /etc/rancher/k3s/config.yaml
+    owner: root
+    group: root
+    mode: 0640
+
 - name: Set hardened kernel paramaters
   include_tasks: hardening.yml
 
@@ -27,16 +44,6 @@
 - name: Deploy canal network policy manifest
   include_tasks: canal.yml
   when: canal_enable
-
-- name: Copy Admission Controller config to server node
-  template:
-    src: "admission-configuration.yaml.j2"
-    dest: "/etc/rancher/k3s/admission-configuration.yaml"
-    owner: root
-    group: root
-    mode: 0640
-  tags:
-    - podsecurity
 
 - name: Init cluster inside the transient k3s-init service
   command:

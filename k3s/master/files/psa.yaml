@@ -1,0 +1,21 @@
+apiVersion: apiserver.config.k8s.io/v1 # see compatibility note
+kind: AdmissionConfiguration
+plugins:
+- name: PodSecurity
+  configuration:
+    apiVersion: pod-security.admission.config.k8s.io/v1
+    kind: PodSecurityConfiguration
+    defaults:
+      enforce: baseline
+      enforce-version: v1.26
+      audit: baseline
+      audit-version: v1.26
+      warn: restricted
+      warn-version: v1.26
+    exemptions:
+      usernames: []
+      runtimeClasses: []
+      namespaces:
+        - kube-system
+        - cis-operator-system
+        - node-exporter
