@@ -13,6 +13,9 @@
   args:
     warn: false  # The ansible systemd module does not support reset-failed
 
+- name: Set hardened kernel paramaters
+  include_tasks: hardening.yml
+
 - name: Deploy vip manifest
   include_tasks: vip.yml
   when: kube_vip_enable

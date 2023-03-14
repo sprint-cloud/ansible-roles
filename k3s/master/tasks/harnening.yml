@@ -1,0 +1,24 @@
+- name: Hardened BPF JIT compilation
+  ansible.posix.sysctl:
+    name: vm.panic_on_oom
+    value: 0
+
+- name: Hardened BPF JIT compilation
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: 1
+
+- name: Hardened BPF JIT compilation
+  ansible.posix.sysctl:
+    name: kernel.panic
+    value: 10
+
+- name: Hardened BPF JIT compilation
+  ansible.posix.sysctl:
+    name: kernel.panic_on_oops
+    value: 1
+
+- name: Hardened BPF JIT compilation
+  ansible.posix.sysctl:
+    name: kernel.keys.root_maxbytes
+    value: 25000000
