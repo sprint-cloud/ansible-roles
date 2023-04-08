@@ -17,5 +17,7 @@ plugins:
       runtimeClasses: []
       namespaces:
         - kube-system
+        - longhorn-system
         - cis-operator-system
-        - node-exporter
+        - traefik
+        - metrics
