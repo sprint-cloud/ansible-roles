@@ -41,10 +41,6 @@
   include_tasks: metallb.yml
   when: metal_lb_enable
 
-- name: Deploy canal network policy manifest
-  include_tasks: canal.yml
-  when: canal_enable
-
 - name: Init cluster inside the transient k3s-init service
   command:
     cmd: "systemd-run -p RestartSec=2 \

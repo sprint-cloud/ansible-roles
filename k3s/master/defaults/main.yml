@@ -13,4 +13,3 @@ server_init_args: >-
 
 kube_vip_enable: true
 metal_lb_enable: true
-canal_enable: true
