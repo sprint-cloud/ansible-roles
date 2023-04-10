@@ -50,24 +50,6 @@
     mode: 0644
   when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
 
-- name: Block all traffic between namespaces
-  copy:
-    src: "allow-ingress.yaml"
-    dest: "/var/lib/rancher/k3s/server/manifests/block-all.yaml"
-    owner: root
-    group: root
-    mode: 0644
-  when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
-
-- name: Allow traffic to Traefik ingress controller
-  copy:
-    src: "allow-ingress.yaml"
-    dest: "/var/lib/rancher/k3s/server/manifests/allow-ingeress.yaml"
-    owner: root
-    group: root
-    mode: 0644
-  when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
-
 # Auditing
 - name: Create audit directory
   file:
