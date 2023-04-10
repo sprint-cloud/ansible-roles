@@ -14,6 +14,11 @@
     name: net.core.bpf_jit_harden
     value: 2
 
+- name: Increase inotify max user instances
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_instances
+    value: 8192
+
 - name: Add a legal banner to /etc/issue, to warn unauthorized users [BANN-7126]
   ansible.builtin.copy:
     src: issue
