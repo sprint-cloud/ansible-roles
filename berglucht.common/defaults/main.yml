@@ -15,6 +15,7 @@ extra_package_install: []
 extra_package_remove: []
 
 ### Firewall ###
+ufw_enable: false
 ufw_enable_logging: true
 ufw_additional_ports: []
 #     - name: Name of application

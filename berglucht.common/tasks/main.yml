@@ -15,6 +15,7 @@
   import_tasks: ./firewall.yml
   tags:
     - firewall
+  when: ufw_enable
 
 - name: Install packages
   import_tasks: ./install.yml
