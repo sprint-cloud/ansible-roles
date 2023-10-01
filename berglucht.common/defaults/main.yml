@@ -3,7 +3,7 @@
 ### System ###
 admin_user: ubuntu
 reboot_when_required: false
-perform_system_upgrade: true
+perform_system_upgrade: false
 
 ### Auditing ###
 audit_results_path: /tmp/audit
