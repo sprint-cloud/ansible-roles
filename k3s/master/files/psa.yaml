@@ -19,6 +19,6 @@ plugins:
         - kube-system
         - metallb-system
         - longhorn-system
-        - unrestricted
+        - default
         - traefik
         - metrics
