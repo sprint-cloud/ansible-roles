@@ -5,12 +5,12 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-{% if metal_lb_ip_range is string %}
-{# metal_lb_ip_range was used in the legacy way: single string instead of a list #}
+{% if metallb.ip_pool is string %}
+{# metallb.ip_pool  was used in the legacy way: single string instead of a list #}
 {#   => transform to list with single element #}
-{% set metal_lb_ip_range = [metal_lb_ip_range] %}
+{% set metallb.ip_pool  = [metallb.ip_pool] %}
 {% endif %}
-{% for range in metal_lb_ip_range %}
+{% for range in metallb.ip_pool  %}
   - {{ range }}
 {% endfor %}
 ---

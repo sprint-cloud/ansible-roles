@@ -39,7 +39,7 @@
   
 - name: Deploy metallb manifest
   include_tasks: metallb.yml
-  when: metal_lb_enable
+  when: metallb.enable
   tags: metallb
 
 - name: Deploy Longhorn persistent storage

@@ -1,7 +1,10 @@
 ---
-- name: Deploy metallb pool
+- name: Check Helm installs
+  include_tasks: check_helm_installs.yml
+
+- name: Deploy metallb IP pool CR
   include_tasks: metallb.yml
-  when: metal_lb_enable
+  when: metallb.enable
 
 - name: Remove tmp directory used for manifests
   file:

@@ -9,10 +9,10 @@
   when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
   tags: metallb
 
-- name: Copy metallb manifest to first master
-  copy:
-    src: files/metallb-native.yaml
-    dest: "/var/lib/rancher/k3s/server/manifests/metallb-deploy.yaml"
+- name: Copy metallb helm manifest to first master
+  template:
+    src: templates/metallb_chart.yaml.j2
+    dest: "/var/lib/rancher/k3s/server/manifests/metallb_chart.yaml"
     owner: root
     group: root
     mode: 0644
