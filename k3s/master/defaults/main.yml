@@ -13,4 +13,3 @@ server_init_args: >-
 
 kube_vip_enable: true
 metal_lb_enable: true
-metal_lb_version: "v0.13.11"

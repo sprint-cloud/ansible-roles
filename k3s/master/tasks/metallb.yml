@@ -10,8 +10,8 @@
   tags: metallb
 
 - name: Copy metallb manifest to first master
-  get_url:
-    url: "https://raw.githubusercontent.com/metallb/metallb/{{ metal_lb_version }}/config/manifests/metallb-native.yaml"
+  copy:
+    src: files/metallb-native.yaml
     dest: "/var/lib/rancher/k3s/server/manifests/metallb-deploy.yaml"
     owner: root
     group: root
