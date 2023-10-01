@@ -21,7 +21,6 @@
     group: root
     mode: 0700
 
-
 - name: Copy k3s config file to master
   copy:
     src: config.yaml
@@ -36,21 +35,6 @@
 - name: Deploy vip manifest
   include_tasks: vip.yml
   when: kube_vip_enable
-  
-- name: Deploy metallb manifest
-  include_tasks: metallb.yml
-  when: metallb.enable
-  tags: metallb
-
-- name: Deploy Longhorn persistent storage
-  include_tasks: longhorn.yml
-  when: longhorn.enable
-  tags: longhorn
-
-- name: Deploy Traefik ingress controller
-  include_tasks: traefik.yml
-  when: traefik.enable
-  tags: traefik
   
 - name: Init cluster inside the transient k3s-init service
   command:
@@ -179,6 +163,7 @@
   find:
     paths: /var/lib/rancher/k3s/server/manifests
     file_type: directory
+    excludes: helm
   register: k3s_server_manifests_directories
 
 - name: Remove manifests and folders that are only needed for bootstrapping cluster so k3s doesn't auto apply on start
@@ -190,3 +175,5 @@
     - "{{ k3s_server_manifests_directories.files }}"
   loop_control:
     label: "{{ item.path }}"
+
+

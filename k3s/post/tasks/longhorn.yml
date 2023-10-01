@@ -1,0 +1,20 @@
+- name: Copy Longhorn Helm manifest to master
+  template:
+    src: templates/longhorn_chart.yaml.j2
+    dest: "/tmp/longhorn-chart.yaml"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [longhorn, helm-charts]
+
+- name: Apply Longhorn Helm manifest
+  command: "k3s kubectl apply -f /tmp/longhorn-chart.yaml"
+  tags: [longhorn, helm-charts]
+
+- name: Waiting for Longhorn pods to be ready...
+  command: "k3s kubectl wait pods --all -n longhorn-system --for condition=Ready"
+  register: result
+  retries: 10
+  delay: 5
+  until: result is not failed
+  tags: [longhorn, helm-charts]

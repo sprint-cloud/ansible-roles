@@ -1,37 +1,35 @@
----
-- name: Create manifests directory for temp configuration
-  file:
-    path: /tmp/k3s
-    state: directory
-    owner: "{{ ansible_user }}"
-    mode: 0755
-  with_items: "{{ groups['master'] }}"
-  run_once: true
-
-- name: Copy metallb CRs manifest to first master
+- name: Copy MetalLB Helm manifest to master
   template:
-    src: "metallb.crs.j2"
-    dest: "/tmp/k3s/metallb-crs.yaml"
-    owner: "{{ ansible_user }}"
-    mode: 0755
-  with_items: "{{ groups['master'] }}"
-  run_once: true
+    src: templates/metallb_chart.yaml.j2
+    dest: "/tmp/metallb-chart.yaml"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [metallb, helm-charts]
 
-- name: Apply metallb CRs
-  command: >-
-    k3s kubectl apply -f /tmp/k3s/metallb-crs.yaml
-    --timeout='{{ metal_lb_available_timeout }}'
-  register: this
-  changed_when: false
-  run_once: true
-  until: this.rc == 0
-  retries: 5
+- name: Apply MetalLB Helm manifest
+  command: "k3s kubectl apply -f /tmp/metallb-chart.yaml"
+  tags: [metallb, helm-charts]
 
-- name: Test metallb-system resources
-  command: >-
-    k3s kubectl -n metallb-system get {{ item }}
-  changed_when: false
-  run_once: true
-  with_items:
-    - IPAddressPool
-    - L2Advertisement
+- name: Waiting for MetalLB pods to be ready...
+  command: "k3s kubectl wait pods --all -n metallb-system --for condition=Ready"
+  register: result
+  retries: 10
+  delay: 5
+  until: result is not failed
+  tags: [metallb, helm-charts]
+
+- name: Create MetalLB CRs
+  template:
+    src: templates/metallb.crs.yaml.j2
+    dest: /tmp/metallb.crs.yaml
+    mode: 0644
+    owner: root
+    group: root
+  tags: [metallb, helm-charts]
+
+- name: Apply MetalLB CRs
+  command: "k3s kubectl apply -f /tmp/metallb.crs.yaml"
+  retries: 10
+  delay: 5
+  tags: [metallb, helm-charts]

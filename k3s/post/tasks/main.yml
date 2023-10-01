@@ -1,12 +1,24 @@
 ---
-- name: Check Helm installs
-  include_tasks: check_helm_installs.yml
+# - name: Install Metallb Loadbalancer
+#   include_tasks: metallb.yml
+#   when: metallb.enable and ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+#   tags: metallb
+  
 
-- name: Deploy metallb IP pool CR
+# - name: Check Helm installs
+#   include_tasks: check_helm_installs.yml
+
+- name: Deploy Metallb Loadbalancer
   include_tasks: metallb.yml
-  when: metallb.enable
+  when: metallb.enable and ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+  tags: [metallb,helm-charts]
 
-- name: Remove tmp directory used for manifests
-  file:
-    path: /tmp/k3s
-    state: absent
+- name: Deploy Longhorn replicated storage
+  include_tasks: longhorn.yml
+  when: longhorn.enable and ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+  tags: [longhorn,helm-charts]
+
+- name: Deploy Traefik Ingress controller
+  include_tasks: traefik.yml
+  when: traefik.enable and ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
+  tags: [traefik,helm-charts]
