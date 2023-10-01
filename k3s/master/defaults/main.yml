@@ -13,3 +13,17 @@ server_init_args: >-
 
 kube_vip_enable: true
 metal_lb_enable: true
+
+# Persistent storage
+longhorn:
+  enable: true
+  chart_version: 1.5.1
+
+# Ingress
+traefik:
+  enable: true
+  chart_version: 24.0.0
+  replicas: 3
+  dashboard: false
+  service_type: LoadBalancer 
+

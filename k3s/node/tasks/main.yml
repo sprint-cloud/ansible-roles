@@ -1,5 +1,14 @@
 ---
 
+- name: Install Longhorn requirements
+  apt:
+    state: latest
+    update_cache: true
+    name:
+      - open-iscsi
+      - nfs-common
+  tags: longhorn
+
 - name: Copy K3s service file
   template:
     src: "k3s.service.j2"
