@@ -1,0 +1,14 @@
+---
+- name: Install libvirt packages
+  package:
+    name:
+      - libguestfs-tools
+      - libvirt-dev
+      - virtinst
+    state: present
+  delegate_to: localhost
+
+- name: Install libvirt-python
+  pip:
+    name: libvirt-python
+  delegate_to: localhost

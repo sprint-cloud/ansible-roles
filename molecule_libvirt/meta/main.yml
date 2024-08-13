@@ -1,0 +1,19 @@
+---
+dependencies: []
+galaxy_info:
+  author: Benjamin Goetz
+  namespace: ipa
+  role_name: molecule_libvirt
+  description: The role creates / destroys VMs via KVM for testing of ansible roles via molecule.
+  company: Fraunhofer IPA
+
+  license: license (MIT)
+
+  min_ansible_version: 2.1
+
+  platforms:
+  - name: Ubuntu
+    versions:
+    - 20.04
+
+  galaxy_tags: [kvm, qemu, libvirt, molecule, provider]

@@ -1,0 +1,81 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: hypervisor
+  gather_facts: false
+  tasks:
+    - name: Include defaults
+      include_vars: ../../defaults/main.yml
+
+    - name: Set Image List
+      set_fact:
+        image_list: "{{ molecule_yml.platforms }}"
+
+    - name: Set OS List
+      set_fact:
+        os_list: |
+          {{ os_list | default([]) +
+            [{
+              'url': images[item.os][item.version].url,
+              'checksum': images[item.os][item.version].checksum | default(''),
+              'filename': filename,
+              'instance': item.name,
+              'name': name,
+              'extension': extension,
+              'os': item.os,
+              'kernel': images[item.os][item.version].kernel | default(''),
+              'dtb': images[item.os][item.version].dtb | default(''),
+              'git': images[item.os][item.version].git | default(''),
+              'custom_extension': images[item.os][item.version].custom_extension | default(''),
+              'version': item.version,
+              'vm_ram_mb': images[item.os][item.version].vm_ram_mb | default(vm_default_ram_mb),
+              'vm_vcpus': images[item.os][item.version].vm_vcpus | default(vm_default_vcpus)
+            }] }}
+      loop: "{{ image_list }}"
+      vars:
+        filename: "{{ images[item.os][item.version].url | urlsplit('path') | split('/') | last }}"
+        extension: "{{ filename | split('.') | last }}"
+        name: "{{ filename[0:-(extension | length + 1)] }}"
+
+    - name: Get VMs list
+      community.libvirt.virt:
+        command: list_vms
+      register: existing_vms
+      changed_when: no
+
+    - assert:
+        that: item.instance in existing_vms.list_vms
+      loop: "{{ os_list }}"
+
+    - name: Create inventory group guests
+      add_host:
+        ansible_connection: community.libvirt.libvirt_qemu
+        ansible_libvirt_uri: >
+          {% if hostvars[groups['hypervisor'] | first].ansible_connection == 'ssh' %}qemu+ssh://{{ hostvars[groups['hypervisor'] | first].ansible_user }}@{{ hostvars[groups['hypervisor'] | first].ansible_host }}/system{% else %}qemu:///system{% endif %}
+        ansible_host: "{{ item.instance }}"
+        name: "{{ item.instance }}"
+      loop: "{{ os_list }}"
+
+- name: Verify
+  hosts: all:!hypervisor
+  gather_facts: false
+  vars:
+    ansible_connection: community.libvirt.libvirt_qemu
+    ansible_libvirt_uri: >-
+      {% if hostvars[groups['hypervisor'] | first].ansible_connection == 'ssh' %}qemu+ssh://{{ hostvars[groups['hypervisor'] | first].ansible_user }}@{{ hostvars[groups['hypervisor'] | first].ansible_host }}/system{% else %}qemu:///system{% endif %}
+  tasks:
+    - name: Test login
+      ansible.builtin.ping:
+
+    - name: Test ping of 8.8.8.8
+      shell: ping -c 1 8.8.8.8
+      register: output_ping_ip
+      until: output_ping_ip.rc == 0
+      retries: 10
+
+    - name: Test ping of www.google.de
+      shell: ping -c 1 www.google.de
+      register: output_ping_name
+      until: output_ping_name.rc == 0
+      retries: 10

@@ -1,0 +1,105 @@
+# Make user who is interacting with  /var/run/libvirt/libvirt-sock is in usergroup 'libvirt' and 'kvm' and reboot machine (defined in /etc/libvirt/libvirt.conf - unix_sock_group)
+- assert:
+    that: "{{ molecule_yml.platforms | length > 0 }}"
+
+- name: Install local packages
+  include_tasks: helper/install_local_packages.yml
+
+- set_fact:
+    hypervisor_connection: "{{ hostvars[groups['hypervisor'] | first ].ansible_connection | default ('') }}"
+    hypervisor_user: "{{ hostvars[groups['hypervisor'] | first ].ansible_user | default ('') }}"
+
+- name: Exchange ssh key if hypervisor is not localhost
+  when: hypervisor_connection == 'ssh'
+  include_tasks: helper/exchange_ssh_key.yml
+
+- name: Set Image List
+  set_fact:
+    image_list: "{{ molecule_yml.platforms }}"
+
+- name: Set OS List
+  include_tasks: helper/set_os_list.yml
+  loop: "{{ image_list }}"
+
+- name: Install KVM / QEMU / Libvirt
+  include_tasks: helper/install_qemu_kvm_libvirt.yml
+
+- name: Download and config VMs' disk files
+  include_tasks: helper/download_config_disk_files.yml
+  when: not ( lookup('env', 'skip_download_and_config_of_images') | default(true) | bool)
+  loop: "{{ os_list }}"
+
+- name: Get VMs list
+  community.libvirt.virt:
+    command: list_vms
+  register: existing_vms
+  changed_when: no
+
+- name: Print running VMs
+  debug:
+    var: existing_vms
+
+- name: Copy resized base image to libvirt directory (no-zip)
+  copy:
+    dest: "{{ libvirt_pool_dir }}/{{ item.instance }}.qcow2"
+    src: "{{ folder_download }}/{{ item.filename }}"
+    force: no
+    remote_src: yes
+    mode: 0644
+  when:
+    - item.instance not in existing_vms.list_vms | default([])
+    - item.extension != 'zip'
+  become: yes
+  loop: "{{ os_list }}"
+
+- name: Configure image
+  include_tasks: helper/configure_image.yml
+  loop: "{{ range(0, 5, 1) | list }}"
+
+- name: Define VM
+  include_tasks: helper/define_vm.yml
+
+- name: Ensure VMs are started
+  community.libvirt.virt:
+    name: "{{ item.instance }}"
+    state: running
+  loop: "{{ os_list }}"
+  register: vm_start_results
+  until: "vm_start_results is success"
+  retries: 15
+  delay: 2
+  become: yes
+
+- set_fact:
+    results: |
+      {{ results | default([]) +
+        [{
+          'instance': item.instance,
+          'address': item.instance,
+          'user': 'root',
+          'port': 0,
+          'connection': 'community.libvirt.libvirt_qemu',
+          'identity_file': ''
+        }]
+      }}
+  loop: "{{ os_list }}"
+
+- set_fact:
+    server:
+      changed: true
+      results: "{{ results }}"
+
+
+- name: Check if Guest has IP
+  command: "virsh domifaddr {{ item.instance }}"
+  changed_when: false
+  become: yes
+  register: cmd_out
+  until: cmd_out.stdout_lines | length >= 3
+  retries: 60
+  delay: 2
+  loop: "{{ os_list }}"
+
+- name: Check if Guest Agent is available
+  include_tasks: helper/check_ga_started.yml
+  loop: "{{ os_list }}"

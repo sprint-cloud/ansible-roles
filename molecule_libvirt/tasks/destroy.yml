@@ -1,0 +1,60 @@
+---
+- assert:
+    that: "{{ molecule_yml.platforms | length > 0 }}"
+
+- set_fact:
+    image_list: "{{ molecule_yml.platforms }}"
+
+- set_fact:
+    os_list: |
+      {{ os_list | default([]) +
+        [{
+          'url': images[item.os][item.version].url,
+          'checksum': images[item.os][item.version].checksum | default(''),
+          'filename': filename,
+          'instance': item.name,
+          'name': name,
+          'extension': extension,
+          'os': item.os,
+          'kernel': images[item.os][item.version].kernel | default(''),
+          'dtb': images[item.os][item.version].dtb | default(''),
+          'custom_extension': images[item.os][item.version].custom_extension | default('')
+        }] }}
+  loop: "{{ image_list }}"
+  vars:
+    name: "{{ images[item.os][item.version].url | urlsplit('path') | split('/') | last | split('.') | first }}"
+    filename: "{{ images[item.os][item.version].url | urlsplit('path') | split('/') | last }}"
+    extension: "{{ images[item.os][item.version].url | urlsplit('path') | split('/') | last | split('.') | last }}"
+
+- name: Get VMs list
+  community.libvirt.virt:
+    command: list_vms
+  register: existing_vms
+  changed_when: no
+
+- name: Stop vms
+  community.libvirt.virt:
+    name: "{{ item.instance }}"
+    state: destroyed
+  when: item.instance in existing_vms.list_vms
+  loop: "{{ os_list }}"
+  loop_control:
+    label: "Stop vm '{{ item.instance }}'"
+
+- name: Undefine vms
+  community.libvirt.virt:
+    name: "{{ item.instance }}"
+    command: undefine
+  when: item.instance in existing_vms.list_vms
+  loop: "{{ os_list }}"
+  loop_control:
+    label: "Undefine vm '{{ item.instance }}'"
+
+- name: Remove disk files of vms
+  file:
+    path: "{{ libvirt_pool_dir }}/{{ item.instance }}.qcow2"
+    state: absent
+  become: yes
+  loop: "{{ os_list }}"
+  loop_control:
+    label: "Remove file '{{ libvirt_pool_dir }}/{{ item.instance }}.qcow2'"

@@ -1,0 +1,59 @@
+<domain type="qemu">
+  <name>{{ vm_name }}</name>
+  <memory unit='MiB'>{{ vm_ram_mb }}</memory>
+  <vcpu placement="static">{{ vm_vcpus }}</vcpu>
+  <os>
+    <type arch="armv6l" machine="versatilepb">hvm</type>
+    <kernel>{{ libvirt_pool_dir }}/{{ kernel }}</kernel>
+    <cmdline>root=/dev/vda2 panic=1</cmdline>
+    <dtb>{{ libvirt_pool_dir }}/{{ dtb }}</dtb>
+    <boot dev="hd"/>
+  </os>
+  <cpu mode="custom" match="exact" check="none">
+    <model fallback="allow">arm1176</model>
+  </cpu>
+  <clock offset="utc"/>
+  <devices>
+    <emulator>/usr/bin/qemu-system-arm</emulator>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="raw"/>
+      <source file="{{ libvirt_pool_dir }}/{{ vm_name }}.{{ custom_extension }}"/>
+      <target dev="vda" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
+    </disk>
+    <controller type="pci" index="0" model="pci-root"/>
+    <controller type="virtio-serial" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x0"/>
+    </controller>
+    <interface type="network">
+      <source network="default"/>
+      <model type="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
+    </interface>
+    <serial type="pty">
+      <target port="0"/>
+    </serial>
+    <console type="pty">
+      <target type="serial" port="0"/>
+    </console>
+    <channel type="spicevmc">
+      <target type="virtio" name="com.redhat.spice.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="1"/>
+    </channel>
+    <channel type="unix">
+      <target type="virtio" name="org.qemu.guest_agent.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="2"/>
+    </channel>
+    <graphics type="spice" autoport="yes">
+      <listen type="address"/>
+      <image compression="off"/>
+    </graphics>
+    <sound model="ich6">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0"/>
+    </sound>
+    <video>
+      <model type="vga" vram="16384" heads="1" primary="yes"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x05" function="0x0"/>
+    </video>
+  </devices>
+</domain>

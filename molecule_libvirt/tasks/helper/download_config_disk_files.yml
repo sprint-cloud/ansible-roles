@@ -1,0 +1,99 @@
+- name: Print var defining force download
+  debug:
+    var: lookup('env', 'force_image_download') | default(false) | bool
+
+- name: "Download base image to folder: /tmp"
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ folder_download }}/{{ item.filename }}"
+    checksum: "{{ item.checksum }}"
+    force: "{{ lookup('env', 'force_image_download') | default(false) | bool }}"
+  register: get_url_result
+
+- name: "Unzip to /tmp if image is zipped"
+  ansible.builtin.unarchive:
+    src: "{{ folder_download }}/{{ item.filename }}"
+    dest: "{{ folder_download }}"
+    remote_src: yes
+  when: item.extension == 'zip'
+
+- name: "Create dir if cloning is required"
+  ansible.builtin.file:
+    path: "{{ folder_download }}/{{ item.name }}"
+    state: directory
+    mode: '0755'
+  when: item.git != ''
+
+- name: "Clone custom kernel"
+  ansible.builtin.git:
+    repo: "{{ item.git }}"
+    dest: "{{ folder_download }}/{{ item.name }}"
+  when: item.git != ''
+
+- name: Copy netplan config file
+  template:
+    src: netplan-network.yaml.j2
+    dest: "{{ folder_download }}/netplan-network.yaml"
+
+#- name: Create Folder for configured VM disks
+#  ansible.builtin.file:
+#    path: "{{ folder_configured_images }}"
+#    state: directory
+#    mode: '0755'
+#
+#- name: Create copy for base config (no-zip)
+#  copy:
+#    dest: "{{ folder_configured_images }}/{{ item.name }}.qcow2"
+#    src: "{{ folder_download }}/{{ item.filename }}"
+#    force: no
+#    remote_src: yes
+#    mode: 0644
+#  when:
+#    - item.extension != 'zip'
+#    - get_url_result.changed
+#  become: yes
+#  register: copy_result_non_zip
+#
+#- name: Create copy for base config (zip)
+#  copy:
+#    dest: "{{ folder_configured_images }}/{{ item.name }}.{{ item.custom_extension }}"
+#    src: "{{ folder_download }}/{{ item.name }}.{{ item.custom_extension }}"
+#    force: no
+#    remote_src: yes
+#    mode: 0777
+#  when: item.extension == 'zip'
+#  become: yes
+#  register: copy_result_zip
+#
+#- name: Print customization command
+#  debug:
+#    msg: "{{ virt_custom_cmds[item.os] }}"
+#
+#- name: Configure the image
+#  command: "{{ virt_custom_cmds[item.os] }}"
+#  become: yes
+#  when: copy_result_non_zip.changed or copy_result_zip.changed
+
+- name: Get disk size of image
+  command: "qemu-img info {{ folder_download }}/{{ item.filename }}"
+  register: disk_size
+  changed_when: false
+
+- set_fact:
+    stdout_split: "{{ disk_size.stdout_lines[2] | split(' ') }}"
+
+- name: Extract virtual image size
+  set_fact:
+    image_size: "{{ stdout_split[2] }}"
+    image_size_unit: "{{ stdout_split[3] }}"
+
+- name: Print virtual image size
+  debug:
+    msg: "{{ image_size }} {{ image_size_unit }}"
+
+- name: Resize image
+  command: "qemu-img resize {{ folder_download }}/{{ item.filename }} 5G"
+  when:
+    - item.extension != 'zip'
+    - image_size_unit != 'GiB' or (image_size_unit == 'GiB' and (image_size | int) < 5)
+  become: yes

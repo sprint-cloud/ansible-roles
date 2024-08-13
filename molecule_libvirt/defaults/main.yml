@@ -1,0 +1,33 @@
+---
+# defaults file for molecule_libvirt
+libvirt_pool_dir: "/var/lib/libvirt/images"
+vm_default_ram_mb: "1024"
+vm_default_vcpus: "1"
+
+folder_download: "/tmp"
+folder_configured_images: "{{ folder_download }}/configured_images"
+
+images:
+  ubuntu:
+    1804:
+      url: "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img"
+      vm_ram_mb: "2048"
+    2004:
+      url: "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+      vm_ram_mb: "2048"
+    2110:
+      url: "https://cloud-images.ubuntu.com/impish/current/impish-server-cloudimg-amd64.img"
+      vm_ram_mb: "2048"
+    2204:
+      url: "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+      vm_ram_mb: "2048"
+  centos:
+    7:
+      url: "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2"
+      vm_ram_mb: "2048"
+    8:
+      url: "https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2"
+      vm_ram_mb: "2048"
+    9:
+      url: "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20220309.0.x86_64.qcow2"
+      vm_ram_mb: "2048"

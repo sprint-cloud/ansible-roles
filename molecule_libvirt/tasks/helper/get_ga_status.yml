@@ -1,0 +1,28 @@
+
+- name: Get GA status of VM
+  when: ga_state | default('') != 'connected'
+  block:
+  - assert:
+      that: vm_name is defined
+
+  - name: Get XML of VM
+    community.libvirt.virt:
+      command: get_xml
+      name: "{{ vm_name }}"
+    register: get_xml
+
+  - name: Get Value from xml string
+    community.general.xml:
+      xmlstring: "{{ get_xml.get_xml | regex_replace('\n','') }}"
+      content: attribute
+      xpath: /domain/devices/channel/target
+    register: parsed_xml
+
+  - set_fact:
+      ga_state: "{{ parsed_xml.matches | json_query(query) | first }}"
+    vars:
+      query: "[?target.name=='org.qemu.guest_agent.0'].target.state"
+
+  - pause:
+      seconds: 5
+    when: ga_state | default('') != 'connected'

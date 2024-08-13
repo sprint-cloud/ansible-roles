@@ -1,0 +1,7 @@
+---
+- set_fact:
+    vm_name: "{{ item.instance }}"
+    ga_state: ""
+
+- include_tasks: helper/get_ga_status.yml
+  loop: "{{ range(1, 5) }}"

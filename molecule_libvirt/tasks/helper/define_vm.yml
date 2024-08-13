@@ -1,0 +1,30 @@
+---
+- name: Define vm
+  when: item.instance not in existing_vms.list_vms
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'vm-definition.xml.j2') }}"
+  vars:
+    vm_name: "{{ item.instance }}"
+    vm_ram_mb: "{{ item.vm_ram_mb }}"
+    vm_vcpus: "{{ item.vm_vcpus }}"
+  become: yes
+  loop: "{{ os_list }}"
+  async: 120
+  poll: 0
+  register: async_define_vm
+
+- debug:
+    var: async_define_vm
+
+- name: Check define status of vm
+  when: item.changed == true
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_define_vm.results | default([]) }}"
+  register: async_poll_results
+  until: async_poll_results.finished
+  retries: 30
+
+- debug:
+    var: async_define_vm

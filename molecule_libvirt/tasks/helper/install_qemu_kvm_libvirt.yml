@@ -1,0 +1,19 @@
+---
+- name: Install packages
+  package:
+    name:
+      - qemu
+      - qemu-system-arm
+      - qemu-kvm
+      - libguestfs-tools
+      - libvirt-daemon-system
+      - libvirt-clients
+    state: present
+  become: yes
+
+- name: Install pip packages
+  pip:
+    name:
+      - libvirt-python
+      - lxml
+      - jmespath

@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: hypervisor
+  become: yes
+  tasks:
+    - name: "Include molecule_libvirt"
+      include_role:
+        name: ipa.molecule_libvirt
+        tasks_from: create.yml

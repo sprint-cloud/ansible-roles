@@ -1,0 +1,45 @@
+---
+- name: Set filename
+  set_fact:
+    filename: "{{ images[item.os][item.version].url | urlsplit('path') | split('/') | last }}"
+
+- name: Set extension
+  set_fact:
+    extension: "{{ filename | split('.') | last }}"
+
+- name: Set name
+  set_fact:
+    name: "{{ filename[0:-(extension | length + 1)] }}"
+
+- name: Set virt customization commands
+  set_fact:
+    virt_custom_cmds:
+      ubuntu: "virt-customize -a {{ libvirt_pool_dir }}/{{ item.name }}.qcow2  --hostname {{ item.name }}  --root-password password:password --firstboot-command 'growpart /dev/vda 1 && resize2fs /dev/vda1'  --copy-in /tmp/netplan-network.yaml:/etc/netplan/  --install qemu-guest-agent  --uninstall cloud-init --selinux-relabel"
+      centos: "virt-customize -a {{ libvirt_pool_dir }}/{{ item.name }}.qcow2 --hostname {{ item.name }} --root-password password:password --install qemu-guest-agent --run-command 'sed -i \"s/BLACKLIST_RPC=.*/BLACKLIST_RPC=/\" /etc/sysconfig/qemu-ga && sed -i \"s/SELINUX=.*/SELINUX=disabled/\" /etc/selinux/config' --uninstall cloud-init --selinux-relabel"
+
+- name: Set instance customization command
+  set_fact:
+    cmd: "{{ virt_custom_cmds[item.os] }}"
+
+- name: Add item to OSList
+  set_fact:
+    os_list: |
+      {{ os_list | default([]) +
+        [{
+          'url': images[item.os][item.version].url,
+          'checksum': images[item.os][item.version].checksum | default(''),
+          'filename': filename,
+          'instance': item.name,
+          'name': name,
+          'extension': extension,
+          'os': item.os,
+          'kernel': images[item.os][item.version].kernel | default(''),
+          'dtb': images[item.os][item.version].dtb | default(''),
+          'git': images[item.os][item.version].git | default(''),
+          'custom_extension': images[item.os][item.version].custom_extension | default(''),
+          'version': item.version,
+          'vm_ram_mb': images[item.os][item.version].vm_ram_mb | default(vm_default_ram_mb),
+          'vm_vcpus': images[item.os][item.version].vm_vcpus | default(vm_default_vcpus),
+          'virt_custom_cmd': cmd,
+        }] }}
+

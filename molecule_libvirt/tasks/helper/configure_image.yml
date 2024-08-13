@@ -1,0 +1,27 @@
+---
+- name: Configure
+  when:
+    - item.instance not in existing_vms.list_vms
+    - rc_list | default([]) | length == 0 or (1 | string) in rc_list
+  command: "{{ item.virt_custom_cmd }}"
+  become: yes
+  loop: "{{ os_list }}"
+  async: 1000
+  poll: 0
+  register: async_config_image
+
+- name: Check configuration status of images
+  when: item.changed == true
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_config_image.results }}"
+  register: async_poll_results
+  until: async_poll_results.finished
+  failed_when: false
+  retries: 15
+
+- set_fact:
+    rc_list: "{{ async_poll_results.results | map(attribute='rc') | list }}"
+
+- debug:
+    var: rc_list
